@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+echo "== list objects"
+
+#Check for bucket name
+if [ -z "$1" ]; then
+    echo "Bucket name required. Error"
+    exit 1
+fi
+
+aws s3api list-objects-v2  --bucket $1
