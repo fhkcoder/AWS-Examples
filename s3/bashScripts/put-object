@@ -19,7 +19,7 @@ for ((i = 1; i <= NUM_FILES; i++)); do
     # Generate a random file name
     FILE_NAME="file_$i.txt"
     
-    # Determine random file size between 1KB and 10KB
+    ### Determine random file size between 1KB and 10KB
     FILE_SIZE=$((RANDOM % 10 + 1))K
     
     # Create the file with random content
