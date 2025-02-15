@@ -1,0 +1,61 @@
+##!/usr/bin/env bash
+
+echo "== delete objects"
+
+#Check for bucket name
+if [ -z "$1" ]; then
+    echo "Bucket name required. Error"
+    exit 1
+fi
+
+BUCKET_NAME=$1
+
+aws s3api list-objects-v2 \
+--bucket $BUCKET_NAME \
+--query Contents[].Key \
+| jq -n '{Objects: [inputs | .[] | {Key: .}], Quiet: false}' > C:/Users/SHABAN/AppData/Local/Temp/delete_objects.json
+
+
+aws s3api delete-objects --bucket $BUCKET_NAME --delete file://C:/Users/SHABAN/AppData/Local/Temp/delete_objects.json
+
+: <<'COMMENT'
+#!/usr/bin/env bash
+
+echo "== delete bucket"
+
+# Exit immediately if a command exits with a non-zero status
+set -e
+
+# Check for bucket name
+if [ -z "$1" ]; then
+    echo "Bucket name required. Error"
+    exit 1
+fi
+
+BUCKET_NAME=$1
+
+# Set temporary directory
+OUTPUT_DIR="$HOME/s3-bash-scripts"
+mkdir -p "$OUTPUT_DIR"
+DELETE_FILE="$OUTPUT_DIR/delete_objects.json"
+
+
+# List objects in the bucket
+OBJECTS=$(aws s3api list-objects-v2 --bucket "$BUCKET_NAME" --query Contents[].Key)
+
+# Check if OBJECTS is empty
+if [ -z "$OBJECTS" ]; then
+    echo "Bucket is empty. No objects to delete."
+    exit 0
+fi
+
+# Create JSON file for delete-objects command
+echo "$OBJECTS" | jq -n '{Objects: [inputs | .[] | {Key: .}]}' > "$DELETE_FILE"
+
+# Delete objects
+aws s3api delete-objects --bucket "$BUCKET_NAME" --delete "file://$DELETE_FILE"
+
+# Clean up
+rm "$DELETE_FILE"
+
+COMMENT

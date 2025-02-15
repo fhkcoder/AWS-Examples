@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+echo "== list-buckets"
+
+aws s3 ls
+
+#This command requires jq to be installed
+#Lists newest 5 buckets
+#aws s3api list-buckets --query 'Buckets[].{Name: Name, CreationDate: CreationDate}' --output json | jq -r 'sort_by(.CreationDate) | reverse[0.5] | .[] | "\(.CreationDate) \(.Name)"'
