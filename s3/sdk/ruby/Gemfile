@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+source "https://rubygems.org"
+
+# gem "rails"
+
+gem "aws-sdk-s3"
+gem "pry"                  #for debugging/making breakpoints in ruby
+gem "nokogiri"             #used fot parsing, classic parsing library, used with apis
+
