@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 echo "== sync"
-#exit immediately if any command returns a non zero digit or fails
+#exit immediately if any command returns a non zero digit or fails#
 set -e
 
 #Check for bucket name

@@ -2,7 +2,7 @@
 
 echo "put-object"
 
-#Check for bucket name
+###Check for bucket name
 if [ -z "$1" ]; then
     echo "Bucket name required. Error. e.g../bucket my-bucket-name"
     exit 1

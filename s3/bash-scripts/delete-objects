@@ -58,4 +58,5 @@ aws s3api delete-objects --bucket "$BUCKET_NAME" --delete "file://$DELETE_FILE"
 # Clean up
 rm "$DELETE_FILE"
 
+##
 COMMENT

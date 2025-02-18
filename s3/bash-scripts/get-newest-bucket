@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+##
 #This command requires jq to be installed
 #Lists newest 5 buckets
 aws s3api list-buckets --query 'Buckets[].{Name: Name, CreationDate: CreationDate}' --output json | jq -r 'sort_by(.CreationDate) | reverse | .[0] | .Name'

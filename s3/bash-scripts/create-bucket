@@ -12,4 +12,5 @@ aws s3api create-bucket  --bucket $1 \
 --create-bucket-configuration LocationConstraint=us-east-2 \
 --query Location \
 --output text
+
 #--region us-west-1  -- If you want to create a bucket in some other region other thn configure
