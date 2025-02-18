@@ -26,4 +26,4 @@ $fileName="myfile.txt"
 $fileContent="Hello World!"
 Set-Content -Path $fileName -Value $fileContent
 
-Write-S3Object -BucketName $bucketName -File $fileName -key $fileName
+Write-S3Object -BucketName $bucketName -File $fileName -key $fileName 
