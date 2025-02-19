@@ -10,7 +10,7 @@ region = "us-east-2"
 
 # Initialize an S3 client instance
 client = Aws::S3::Client.new
-
+#binding.pry
 # Create an S3 bucket with the specified name and region
 resp = client.create_bucket({
   bucket: bucket_name, 
@@ -18,7 +18,7 @@ resp = client.create_bucket({
     location_constraint: region, 
   } 
 })
-#binding.pry
+
 
 # Generate a random number of files between 1 and 6
 number_of_files = 1 + rand(6)
