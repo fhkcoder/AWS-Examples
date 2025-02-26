@@ -1,0 +1,19 @@
+{
+    "Statement": [
+       {
+          "Effect": "Allow",
+          "Principal": {
+             "AWS": "arn:aws:iam::872515279375:user/gitops"
+          },
+          "Action": [
+             "s3:ListBucket",
+             "s3:PutObject",
+             "s3:GetObject"
+          ],
+          "Resource": [
+            "arn:aws:s3:::bucket-policy-example-01",
+            "arn:aws:s3:::bucket-policy-example-01/*"
+          ]
+       }
+    ]
+}
