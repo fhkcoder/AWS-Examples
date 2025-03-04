@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Website</title>
@@ -11,13 +12,25 @@
         * {
             font-family: "Rubik Bubbles"
         }
-    </style>  
+    </style>
 </head>
-  <body>
+
+<body>
     <main>
         <h1>Welcome to My Website</h1>
-        <p>My first static website built by me.</p>  
+        <p>My first static website built by me.</p>
     </main>
-    <script type="text/javascript" src="http://cors-example-fs-02.s3-website.us-east-2.amazonaws.com/hello.js"></script>
-  </body>
+    <script type="text/javascript">
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "https://kkqgcbuc21.execute-api.us-east-2.amazonaws.com/prod/hello", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                const results = JSON.parse(xhr.responseText);
+                console.log('results', results)
+            }
+        };
+        xhr.send();
+    </script>
+
 </html>
