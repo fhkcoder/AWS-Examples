@@ -37,8 +37,41 @@ We need to create a role that will access a new resource
 
 ## Use new credentials and assume role
 ```sh
+aws iam put-user-policy \
+--user-name sts-machine-user \
+--policy-name StsAssumePolicy \
+--policy-document file://policy.json
+```
+
+```sh
 aws sts assume-role \
 --role-arn arn:aws:iam::872515279375:role/my-sts-stack-1122-StsRole-FuP0aXhYhe9A \
 --role-session-name s3-sts-fun \
 --profile sts
+```
+
+```sh
+aws sts get-caller-identity --profile assumed
+```
+
+```sh
+aws s3 ls --profile assumed
+```
+
+## Clean up
+
+Tear down your Cloudformation Stack via the AWS Management console
+
+```sh
+aws iam delete-user-policy \
+--user-name sts-machine-user \
+--policy-name StsAssumePolicy
+```
+```sh
+aws iam delete-access-key \
+--access-key-id AKIA4WJPWTIHWDTIZVW3 \
+--user-name sts-machine-user
+```
+```sh
+aws iam delete-user --user-name sts-machine-user
 ```
