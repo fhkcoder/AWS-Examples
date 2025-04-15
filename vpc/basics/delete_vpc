@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+#check if the rgument is not provided VPC, IGW, Subnets, RT
+if [ -z "$1" ]; then
+  echo "Argument not provided."
+else
+  export VPC_ID="$1"
+fi
+
+if [ -z "$2" ]; then
+  echo "Argument not provided."
+else
+  export IGW_ID="$2"
+fi
+
+if [ -z "$3" ]; then
+  echo "Argument not provided."
+else
+  export Subnet_ID="$3"
+fi
+
+: <<'COMMENT'
+if [ -z "$4" ]; then
+  echo "Argument not provided."
+else
+  export RT_ID="$4"
+fi
+COMMENT
+
+#detach the igw
+aws ec2 detach-internet-gateway --internet-gateway-id $IGW_ID --vpc-id $VPC_ID
+
+#delete the igw
+aws ec2 delete-internet-gateway --internet-gateway-id $IGW_ID
+
+#delete subnets
+aws ec2 delete-subnet --subnet-id $subnet_id
+
+#delete vpc
+aws ec2 delete-vpc --vpc-id $VPC_ID
