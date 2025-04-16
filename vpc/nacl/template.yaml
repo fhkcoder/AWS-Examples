@@ -1,0 +1,72 @@
+AWSTemplateFormatVersion: 2010-09-09  
+Description: Launch a simple ec2 for use with testing vpcs.
+Parameters:
+  InstanceType:
+    Type: String
+    Default: t2.micro
+  VpcId:
+    Type: String
+    Default: vpc-0be44f82dde31289e
+  ImageId:
+    Type: String
+    Default: ami-04985531f48a27ae7
+  SubnetId:
+    Type: String
+    Default:  subnet-0df2c9f2d6ccb882c
+Resources:
+  EC2SSMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+  EC2InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref EC2SSMRole
+  MyEC2Instance: 
+    Type: AWS::EC2::Instance
+    Properties:
+      IamInstanceProfile: !Ref EC2InstanceProfile
+      InstanceType: !Ref InstanceType 
+      ImageId: !Ref ImageId
+      #SubnetId: !Ref SubnetId
+      #SecurityGroupIds:
+       # - !GetAtt SG.GroupId
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          SubnetId: !Ref SubnetId
+          GroupSet:
+            - !GetAtt SG.GroupId
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          yum update -y
+          yum install -y httpd
+          systemctl start httpd
+          systemctl enable httpd
+          echo "<html><h1>Hello from Apache!</h1></html>" > /var/www/html/index.html
+
+  SG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow http to client host
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
