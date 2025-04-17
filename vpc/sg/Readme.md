@@ -1,0 +1,1 @@
+## Create a SG and test it by changing the inbound/outbound traffic
