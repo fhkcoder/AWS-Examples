@@ -1,44 +1,82 @@
 ## Create a VPC for peering && a subnet
 ```sh
-aws ec2 create-vpc --cidr-block 10.0.0.0/16 --query Vpc.VpcId --output text
-aws ec2 create-subnet --vpc-id vpc-004bf84e8e6418907 --cidr-block 10.0.2.0/20
-aws ec2 create-tags --resources vpc-004bf84e8e6418907 --tags '[{"Key":"Name","Value":"vpc-alpha"}]'
-aws ec2 create-tags --resources subnet-047f38e5e89ad05a8 --tags '[{"Key":"Name","Value":"subnet-alpha"}]'
+aws ec2 create-vpc \
+--tag-specifications 'ResourceType=vpc,Tags=[{Key="Name",Value="vpc-alpha"}]' \
+--cidr-block 10.0.0.0/16 \
+--query Vpc.VpcId \
+--output text
+```
+```sh
+aws ec2 create-subnet \
+--vpc-id vpc-0725aed51cc6caafe \
+--tag-specifications 'ResourceType=subnet,Tags=[{Key="Name",Value="subnet-alpha"}]' \
+--cidr-block 10.0.0.0/16
 ```
 
 ## Create one more VPC and a subnet for it
 ```sh
-aws ec2 create-vpc --cidr-block 12.0.0.0/16 --query Vpc.VpcId --output text
-aws ec2 create-tags --resources vpc-0f60c56108b1736c9 --tags '[{"Key":"Name","Value":"vpc-beta"}]'
-
+aws ec2 create-vpc \
+--tag-specifications 'ResourceType=vpc,Tags=[{Key="Name",Value="vpc-beta"}]' \
+--cidr-block 12.0.0.0/16 \
+--query Vpc.VpcId \
+--output text
+```
+```sh
 aws ec2 create-subnet \
---vpc-id vpc-0f60c56108b1736c9 \
+--vpc-id vpc-0ed6d9d0774b07828 \
 --tag-specifications 'ResourceType=subnet,Tags=[{Key="Name",Value="subnet-beta"}]' \
---cidr-block 12.0.2.0/20
+--cidr-block 12.0.0.0/16
+```
+
+## Create IGWs and attach it to both the VPCs 
+```sh
+aws ec2 create-internet-gateway --query InternetGateway.InternetGatewayId --output text
+aws ec2 attach-internet-gateway --internet-gateway-id igw-0cba4b151a39767bd --vpc-id vpc-0ed6d9d0774b07828
+```
+```sh
+aws ec2 create-internet-gateway --query InternetGateway.InternetGatewayId --output text
+aws ec2 attach-internet-gateway --internet-gateway-id igw-07dfdb3ab6478907e --vpc-id vpc-0725aed51cc6caafe
 ```
 
 ## Create vpc peering connection
 ```sh
-aws ec2 create-vpc-peering-connection --vpc-id vpc-004bf84e8e6418907 --peer-vpc-id vpc-0f60c56108b1736c9
+aws ec2 create-vpc-peering-connection \
+--vpc-id vpc-0725aed51cc6caafe \
+--peer-vpc-id vpc-0ed6d9d0774b07828 \
+--query VpcPeeringConnection.VpcPeeringConnectionId \
+--output text
 ```
 
-## Accept VPC peeing connection
+## Accept VPC peering connection
 ```sh
-aws ec2 accept-vpc-peering-connection --vpc-peering-connection-id pcx-09a1545e9f457b277
+aws ec2 accept-vpc-peering-connection \
+--vpc-peering-connection-id pcx-0185e19770810501b
 ```
 
-## Create a route for the route-tables of both VPCs to connect
+## Create a route for the route-tables of both VPCs to peering conection and also inetrnet gateways
 ```sh
 aws ec2 create-route \
---route-table-id rtb-09169ac2540f98ad6 \
+--route-table-id rtb-04fb5f966f0fff696 \
 --destination-cidr-block 12.0.0.0/16 \
---vpc-peering-connection-id pcx-09a1545e9f457b277
+--vpc-peering-connection-id pcx-0185e19770810501b
 ```
 ```sh
 aws ec2 create-route \
---route-table-id rtb-03bf927ac9f177f2b \
+--route-table-id rtb-062144e5191117316 \
 --destination-cidr-block 10.0.0.0/16 \
---vpc-peering-connection-id pcx-09a1545e9f457b277
+--vpc-peering-connection-id pcx-0185e19770810501b
+```
+```sh
+aws ec2 create-route \
+--route-table-id rtb-062144e5191117316 \
+--destination-cidr-block 0.0.0.0/0 \
+--gateway-id igw-0cba4b151a39767bd
+```
+```sh
+aws ec2 create-route \
+--route-table-id rtb-04fb5f966f0fff696 \
+--destination-cidr-block 0.0.0.0/0 \
+--gateway-id igw-07dfdb3ab6478907e
 ```
 
 ## Create 2 different ec2 instances with different template file configurations
